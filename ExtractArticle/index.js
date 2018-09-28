@@ -8,15 +8,22 @@ const headers = {
 };
 
 module.exports = async function (context, req) {
-    context.log('JavaScript HTTP trigger function processed a request.');
-
-    if (!req.query.url) {
+    context.log('start');
+    
+    if (!req.query.url || !req.query.email) {
+        context.log('fail');
+        context.log(req.query);
         context.res = {
             status: 400,
-            body: "Please pass a url in the query string"
+            body: "Please pass a url and email in the query string",
+            headers: { 'Content-Type': 'application/json' }
         };
         return;
     }
+
+    const url = req.query.url;
+    const email = req.query.email;
+    context.log({ url, email });
 
     const minutes = req.query.minutes || 15;
     const wpm = req.query.wpm || 200;
@@ -24,7 +31,7 @@ module.exports = async function (context, req) {
 
     try {
         const options = {
-            uri: req.query.url,
+            uri: url,
             headers
         };
 
@@ -35,7 +42,9 @@ module.exports = async function (context, req) {
         const { title, elements } = extractArticle(document);
         const snippets = getSnippets(elements, wordLimit);
         const elems = snippets.map(snippet => container(document, snippet).outerHTML);
-    
+
+        context.log('success');
+        context.log({ title });
         context.res = {
             status: 200,
             body: { title, elems },
@@ -43,6 +52,8 @@ module.exports = async function (context, req) {
         };
         return;
     } catch (err) {
+        context.log('error');
+        context.log(err);
         context.res = {
             status: 500,
             body: err,

@@ -1,0 +1,48 @@
+<html>
+
+<head>
+    <title>dripfeed</title>
+    <meta charset="UTF-8">
+    <script>
+        var baseUrl = 'http://localhost:7071/api';
+        function addDrip(event) {
+            event.preventDefault();
+
+            var form = event.srcElement;
+            var url = form.url.value;
+            var email = form.email.value;
+
+            var xhr = new XMLHttpRequest();
+            const dripUrl = `${baseUrl}/ExtractArticle?url=${url}&email=${email}`;
+            xhr.open('POST', dripUrl);
+            xhr.addEventListener('load', function () { console.log(this.responseText); });
+            xhr.send();
+
+            return false;
+        }
+    </script>
+    <style>
+        #dripfeed {
+            width: 320px;
+            margin: 20% auto auto auto;
+        }
+        #dripfeed > * {
+            margin: 10px;
+            padding: 6px;
+            width: 300px;
+        }
+    </style>
+</head>
+
+<body>
+    <form id="dripfeed" onsubmit="return addDrip(event);">
+        <h1>dripfeed</h1>
+        <input type="url" name="url" required autofocus placeholder="https://example.com" />
+        <br/>
+        <input type="email" name="email" required placeholder="user@example.com" />
+        <br/>
+        <input type="submit" value="drip..." />
+    </form>
+</body>
+
+</html>
