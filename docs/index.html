@@ -10,9 +10,9 @@
             event.preventDefault();
 
             var form = event.target;
-            var url = form.url.value;
-            var email = form.email.value;
-            var wordLimit = form.wordLimit.value;
+            var url = encodeURIComponent(form.url.value);
+            var email = encodeURIComponent(form.email.value);
+            var wordLimit = encodeURIComponent(form.wordLimit.value);
             var queryString = `?url=${url}&email=${email}&wordLimit=${wordLimit}`;
 
             var xhr = new XMLHttpRequest();

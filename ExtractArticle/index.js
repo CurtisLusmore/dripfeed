@@ -10,7 +10,6 @@ const headers = {
 
 module.exports = async function (context, req) {
     context.log('start');
-    
     if (!req.query.url || !req.query.email) {
         context.log('fail');
         context.log(req.query);
@@ -44,7 +43,8 @@ module.exports = async function (context, req) {
         const snippets = getSnippets(elements, wordLimit);
         const contents = snippets.map(snippet => container(document, snippet).outerHTML);
         const count = contents.length;
-        
+
+        context.log(`sending ${count} emails`);
         sgMail.setApiKey(process.env['sendgrid_api_key']);
         await sgMail.send(contents.map((content, index) => ({
             to: email,
@@ -70,8 +70,6 @@ module.exports = async function (context, req) {
         return;
     }
 };
-
-
 
 function extractArticle(document) {
     const { title, content } = new Readability('', document).parse();
