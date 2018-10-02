@@ -1,6 +1,7 @@
 const { JSDOM } = require('jsdom');
 const { Readability } = require('readability-node');
 const request = require('request-promise');
+const sgMail = require('@sendgrid/mail');
 const wordCount = require('html-word-count');
 
 const headers = {
@@ -41,14 +42,21 @@ module.exports = async function (context, req) {
         const document = dom.window.document;
         const { title, elements } = extractArticle(document);
         const snippets = getSnippets(elements, wordLimit);
-        const elems = snippets.map(snippet => container(document, snippet).outerHTML);
+        const contents = snippets.map(snippet => container(document, snippet).outerHTML);
+        const count = contents.length;
+        
+        sgMail.setApiKey(process.env['sendgrid_api_key']);
+        await sgMail.send(contents.map((content, index) => ({
+            to: email,
+            from: 'dripfeed <dripfeed@lusmo.re>',
+            subject: `${title} (${index+1}/${count})`,
+            html: content
+        })));
 
         context.log('success');
         context.log({ title });
         context.res = {
-            status: 200,
-            body: { title, elems },
-            headers: { 'Content-Type': 'application/json' }
+            status: 204
         };
         return;
     } catch (err) {

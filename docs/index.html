@@ -1,19 +1,22 @@
+<!DOCTYPE html>
 <html>
 
 <head>
     <title>dripfeed</title>
     <meta charset="UTF-8">
     <script>
-        var baseUrl = 'https://dripfeed-app.azurewebsites.net/api';
+        var baseUrl = 'https://dripfeed-app.azurewebsites.net/api/ExtractArticle';
         function addDrip(event) {
             event.preventDefault();
 
             var form = event.target;
             var url = form.url.value;
             var email = form.email.value;
+            var wordLimit = form.wordLimit.value;
+            var queryString = `?url=${url}&email=${email}&wordLimit=${wordLimit}`;
 
             var xhr = new XMLHttpRequest();
-            const dripUrl = `${baseUrl}/ExtractArticle?url=${url}&email=${email}`;
+            const dripUrl = baseUrl + queryString;
             xhr.open('POST', dripUrl);
             xhr.addEventListener('load', function () { console.log(this.responseText); });
             xhr.send();
@@ -56,7 +59,8 @@
         <h1>dripfeed</h1>
         <input type="url" name="url" required autofocus placeholder="https://example.com" />
         <input type="email" name="email" required placeholder="user@example.com" />
-        <input type="submit" value="drip..." />
+        <input type="hidden" name="wordLimit" value="3000" />
+        <input type="submit" name="submit" value="drip..." />
     </form>
 </body>
 
