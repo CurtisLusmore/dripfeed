@@ -56,7 +56,9 @@ module.exports = async function (context, req) {
         context.log('success');
         context.log({ title });
         context.res = {
-            status: 204
+            status: 200,
+            body: { title, count },
+            headers: { 'Content-Type': 'application/json' }
         };
         return;
     } catch (err) {
