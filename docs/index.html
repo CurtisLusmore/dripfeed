@@ -20,15 +20,18 @@
             var xhr = new XMLHttpRequest();
             const dripUrl = baseUrl + queryString;
             xhr.open('POST', dripUrl);
-            xhr.addEventListener('error', function (ev) { console.log(ev); });
+            xhr.addEventListener('error', function () {
+                alert(`A network error occurred. Please ensure that you have connectivity to ${baseUrl}`);
+                form.submit.disabled = false;
+            });
             xhr.addEventListener('load', function () {
                 var response = JSON.parse(this.responseText);
                 var title = response.title;
                 var count = response.count;
-                form.submit.disabled = false;
                 alert(`${title} coming to your inbox in ${count} installments`);
                 form.url.value = '';
                 form.url.focus();
+                form.submit.disabled = false;
             });
             xhr.send();
 
