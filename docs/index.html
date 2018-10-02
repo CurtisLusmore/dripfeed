@@ -27,10 +27,17 @@
                 form.submit.disabled = false;
             });
             xhr.addEventListener('load', function () {
-                var response = JSON.parse(this.responseText);
-                var title = response.title;
-                var count = response.count;
-                alert(`${title} coming to your inbox in ${count} installments`);
+                if (this.status === 400) {
+                    alert(this.responseText);
+                } else if (this.status !== 200) {
+                    alert('An unknown error occurred.');
+                    console.log(this.responseText);
+                } else {
+                    var response = JSON.parse(this.responseText);
+                    var title = response.title;
+                    var count = response.count;
+                    alert(`${title} coming to your inbox in ${count} installments`);
+                }
                 form.url.value = '';
                 form.url.focus();
                 form.submit.value = 'drip...';

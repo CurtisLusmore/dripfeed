@@ -40,6 +40,14 @@ module.exports = async function (context, req) {
         const dom = new JSDOM(body);
         const document = dom.window.document;
         const { title, elements } = extractArticle(document);
+        if (!title) {
+            context.log('failed');
+            context.res = {
+                status: 400,
+                body: 'Unable to extract article.'
+            };
+            return;
+        }
         const snippets = getSnippets(elements, wordLimit);
         const contents = snippets.map(snippet => container(document, snippet).outerHTML);
         const count = contents.length;
@@ -74,7 +82,9 @@ module.exports = async function (context, req) {
 };
 
 function extractArticle(document) {
-    const { title, content } = new Readability('', document).parse();
+    const result = new Readability('', document).parse();
+    if (!result) return { title: null, elements: []}
+    const { title, content } = result;
     const dom = new JSDOM(content);
     const elements = Array.from(dom.window.document.body.children[0].children[0].children);
     return { title, elements };
