@@ -15,6 +15,7 @@
             var wordLimit = encodeURIComponent(form.wordLimit.value);
             var queryString = `?url=${url}&email=${email}&wordLimit=${wordLimit}`;
 
+            form.submit.value = 'processing...';
             form.submit.disabled = true;
 
             var xhr = new XMLHttpRequest();
@@ -22,6 +23,7 @@
             xhr.open('POST', dripUrl);
             xhr.addEventListener('error', function () {
                 alert(`A network error occurred. Please ensure that you have connectivity to ${baseUrl}`);
+                form.submit.value = 'drip...';
                 form.submit.disabled = false;
             });
             xhr.addEventListener('load', function () {
@@ -31,6 +33,7 @@
                 alert(`${title} coming to your inbox in ${count} installments`);
                 form.url.value = '';
                 form.url.focus();
+                form.submit.value = 'drip...';
                 form.submit.disabled = false;
             });
             xhr.send();
