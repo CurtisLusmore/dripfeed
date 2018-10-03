@@ -12,7 +12,6 @@ module.exports = async function (context, req) {
     context.log('start');
     if (!req.query.url || !req.query.email) {
         context.log('fail');
-        context.log(req.query);
         context.res = {
             status: 400,
             body: "Please pass a url and email in the query string",
@@ -23,7 +22,6 @@ module.exports = async function (context, req) {
 
     const url = req.query.url;
     const email = req.query.email;
-    context.log({ url, email });
 
     const minutes = req.query.minutes || 15;
     const wpm = req.query.wpm || 200;
@@ -41,7 +39,7 @@ module.exports = async function (context, req) {
         const document = dom.window.document;
         const { title, elements } = extractArticle(document);
         if (!title) {
-            context.log('failed');
+            context.log('fail');
             context.res = {
                 status: 400,
                 body: 'Unable to extract article.'
