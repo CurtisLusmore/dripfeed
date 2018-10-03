@@ -73,10 +73,10 @@
                 padding: 6px;
                 width: 90%;
             }
-            #dripfeed h1 {
+            #dripfeed > h1 {
                 font-size: 5em;
             }
-            #dripfeed input {
+            #dripfeed > input, p {
                 font-size: 3em;
             }
         }
@@ -86,10 +86,11 @@
 <body>
     <form id="dripfeed" onsubmit="return addDrip(event);">
         <h1>dripfeed</h1>
-        <input type="url" name="url" required autofocus placeholder="https://example.com" />
+        <input type="url" name="url" required autofocus autocomplete="off" placeholder="https://example.com" />
         <input type="email" name="email" required placeholder="user@example.com" />
         <input type="hidden" name="wordLimit" value="3000" />
         <input type="submit" name="submit" value="drip..." />
+        <p><a href="./about.html">About</a> | <a href="./privacy.html">Privacy</a></p>
     </form>
 </body>
 
