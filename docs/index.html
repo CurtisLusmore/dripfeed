@@ -80,6 +80,9 @@
                 font-size: 3em;
             }
         }
+        #nav, #nav > a {
+            color: grey;
+        }
         #hidden {
             width: 1000px;
             position: absolute;
@@ -95,7 +98,11 @@
         <input type="email" name="email" required placeholder="user@example.com" />
         <input type="hidden" name="wordLimit" value="3000" />
         <input type="submit" name="submit" value="drip..." />
-        <p><a href="./about.html">About</a> | <a href="./privacy.html">Privacy</a></p>
+        <p id="nav">
+            <a href="./about.html">About</a> |
+            <a href="./privacy.html">Privacy</a> |
+            <a href="https://github.com/CurtisLusmore/dripfeed">GitHub</a>
+        </p>
     </form>
     <span id="hidden">
         <p>
@@ -120,10 +127,14 @@
         <p>
             Now stop reading this and go find something longer and more
             interesting to read. And when you do, give it to
-            <a href="./">dripfeed</a>.
+            <a href="https://lusmo.re/dripfeed">dripfeed</a>.
         </p>
         <p>
             P.S. Thanks for trying out dripfeed. I hope you enjoy it.
+        </p>
+        <p>
+            P.P.S. If you want to make any suggestions, create an issue on
+            <a href="https://github.com/CurtisLusmore/dripfeed">GitHub</a>.
         </p>
     </span>
 </body>
