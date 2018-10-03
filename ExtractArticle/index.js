@@ -54,13 +54,12 @@ module.exports = async function (context, req) {
         sgMail.setApiKey(process.env['sendgrid_api_key']);
         await sgMail.send(contents.map((content, index) => ({
             to: email,
-            from: 'dripfeed <dripfeed@lusmo.re>',
+            from: 'dripfeed <noreply@lusmo.re>',
             subject: `${title} (${index+1}/${count})`,
             html: content
         })));
 
         context.log('success');
-        context.log({ title });
         context.res = {
             status: 200,
             body: { title, count },
