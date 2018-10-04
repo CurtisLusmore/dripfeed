@@ -94,10 +94,14 @@
 <body>
     <form id="dripfeed" onsubmit="return addDrip(event);">
         <h1>dripfeed</h1>
-        <input type="url" name="url" required autofocus autocomplete="off" placeholder="https://example.com" />
-        <input type="email" name="email" required placeholder="user@example.com" />
+        <input type="url" name="url" required autofocus autocomplete="off"
+            placeholder="https://long.form/article"
+            title="Enter the URL of a long article" />
+        <input type="email" name="email" required placeholder="your@inbox.com"
+            title="Enter your email address" />
         <input type="hidden" name="wordLimit" value="3000" />
-        <input type="submit" name="submit" value="drip..." />
+        <input type="submit" name="submit" value="drip..."
+            title="Get the article in your inbox in 15 minute installments" />
         <p id="nav">
             <a href="./about">About</a> |
             <a href="./privacy">Privacy</a> |
