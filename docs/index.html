@@ -6,14 +6,25 @@
     <meta charset="UTF-8">
     <script>
         var baseUrl = 'https://dripfeed-app.azurewebsites.net/api/ExtractArticle';
+        function queryParams(data) {
+            var items = [];
+            for (var item in data) {
+                items.push(item + '=' + encodeURIComponent(data[item]));
+            }
+            return '?' + items.join('&');
+        }
         function addDrip(event) {
             event.preventDefault();
 
             var form = event.target;
-            var url = encodeURIComponent(form.url.value);
-            var email = encodeURIComponent(form.email.value);
-            var wordLimit = encodeURIComponent(form.wordLimit.value);
-            var queryString = `?url=${url}&email=${email}&wordLimit=${wordLimit}`;
+            var data = {
+                url: form.url.value,
+                email: form.email.value,
+                mode: form.mode.value,
+                time: form.time.value,
+                wordLimit: form.wordLimit.value
+            };
+            var queryString = queryParams(data);
 
             form.submit.value = 'processing...';
             form.submit.disabled = true;
@@ -47,6 +58,11 @@
 
             return false;
         }
+        function changeDelivery(event) {
+            const form = event.target.form;
+            const mode = form.mode.value;
+            form.time.type = mode === 'now' ? 'hidden' : 'time';
+        }
     </script>
     <style>
         #dripfeed {
@@ -58,10 +74,10 @@
             padding: 6px;
             width: 300px;
         }
-        #dripfeed > input[type=url], input[type=email] {
-            -moz-box-sizing:border-box;
-            -webkit-box-sizing:border-box;
-            box-sizing:border-box;
+        #dripfeed > input {
+            -moz-box-sizing: border-box;
+            -webkit-box-sizing: border-box;
+            box-sizing: border-box;
         }
         @media screen and (max-width: 1080px) {
             #dripfeed {
@@ -76,7 +92,7 @@
             #dripfeed > h1 {
                 font-size: 5em;
             }
-            #dripfeed > input, p {
+            #dripfeed input, p, label {
                 font-size: 3em;
             }
         }
@@ -95,11 +111,19 @@
 <body>
     <form id="dripfeed" onsubmit="return addDrip(event);">
         <h1>dripfeed</h1>
-        <input type="url" name="url" required autofocus autocomplete="off"
+        <input type="url" name="url" required autofocus
             placeholder="https://long.form/article"
             title="Enter the URL of a long article" />
         <input type="email" name="email" required placeholder="your@inbox.com"
             title="Enter your email address" />
+        <span onchange="return changeDelivery(event);">
+            <input type="radio" name="mode" value="now" checked />
+            <label for="now">Deliver now</label>
+            <input type="radio" name="mode" value="daily" />
+            <label for="now">Deliver daily at</label>
+        </span>
+        <input type="hidden" name="time" required value="08:00"
+            title="When would you like your daily dose?" />
         <input type="hidden" name="wordLimit" value="3000" />
         <input type="submit" name="submit" value="drip..."
             title="Get the article in your inbox in 15 minute installments" />

@@ -22,6 +22,24 @@ module.exports = async function (context, req) {
 
     const url = req.query.url;
     const email = req.query.email;
+    const mode = req.query.mode;
+    const time = req.query.time;
+    const parts = time.split(':');
+
+    if (mode === 'daily' && parts.length !== 2) {
+        context.log('fail');
+        context.res = {
+            status: 400,
+            body: 'Invalid time.'
+        };
+        return;
+    }
+
+    const deliveryTime = +parts[0] * 60 + +parts[1];
+    const date = new Date();
+    const currentTime = date.getHours() * 60 + date.getMinutes();
+    if (currentTime > deliveryTime) date.setDate(date.getDate() + 1);
+    date.setHours(0, deliveryTime, 0, 0);
 
     const minutes = req.query.minutes || 15;
     const wpm = req.query.wpm || 200;
@@ -51,13 +69,19 @@ module.exports = async function (context, req) {
         const count = contents.length;
 
         context.log(`sending ${count} emails`);
+        const sendTime = Math.floor(date.getTime() / 1000);
         sgMail.setApiKey(process.env['sendgrid_api_key']);
-        await sgMail.send(contents.map((content, index) => ({
-            to: email,
-            from: 'dripfeed <noreply@lusmo.re>',
-            subject: `${title} (${index+1}/${count})`,
-            html: content
-        })));
+        await sgMail.send(contents.map((content, index) => {
+            const msg = {
+                to: email,
+                from: 'dripfeed <noreply@lusmo.re>',
+                subject: `${title} (${index+1}/${count})`,
+                html: content
+            };
+            if (mode === 'daily') msg.sendAt = sendTime + index*24*60*60;
+            console.log(msg.sendAt);
+            return msg;
+        }));
 
         context.log('success');
         context.res = {
