@@ -95,6 +95,11 @@
             #dripfeed input, p, label {
                 font-size: 3em;
             }
+            #dripfeed input[type=radio] {
+                height: 0.5em;
+                width: 0.5em;
+                border: 0px;
+            }
         }
         #nav, #nav > a {
             color: grey;
@@ -117,10 +122,10 @@
         <input type="email" name="email" required placeholder="your@inbox.com"
             title="Enter your email address" />
         <span onchange="return changeDelivery(event);">
-            <input type="radio" name="mode" value="now" checked />
+            <input type="radio" name="mode" id="now" value="now" checked />
             <label for="now">Deliver now</label>
-            <input type="radio" name="mode" value="daily" />
-            <label for="now">Deliver daily at</label>
+            <input type="radio" name="mode" id="daily" value="daily" />
+            <label for="daily">Deliver daily at</label>
         </span>
         <input type="hidden" name="time" required value="08:00"
             title="When would you like your daily dose?" />
