@@ -14,16 +14,15 @@ module.exports = async function (context, req) {
         context.log('fail');
         context.res = {
             status: 400,
-            body: "Please pass a url and email in the query string",
-            headers: { 'Content-Type': 'application/json' }
+            body: 'Please pass a url and email in the query string'
         };
         return;
     }
 
     const url = req.query.url;
     const email = req.query.email;
-    const mode = req.query.mode;
-    const time = req.query.time;
+    const mode = req.query.mode || 'now';
+    const time = req.query.time || '';
     const parts = time.split(':');
 
     if (mode === 'daily' && parts.length !== 2) {
@@ -71,17 +70,18 @@ module.exports = async function (context, req) {
         context.log(`sending ${count} emails`);
         const sendTime = Math.floor(date.getTime() / 1000);
         sgMail.setApiKey(process.env['sendgrid_api_key']);
-        await sgMail.send(contents.map((content, index) => {
+        const emails = contents.map((content, index) => {
             const msg = {
                 to: email,
-                from: 'dripfeed <noreply@lusmo.re>',
+                from: 'dripfeed <dripfeed@lusmo.re>',
                 subject: `${title} (${index+1}/${count})`,
                 html: content
             };
             if (mode === 'daily') msg.sendAt = sendTime + index*24*60*60;
             console.log(msg.sendAt);
             return msg;
-        }));
+        });
+        await sgMail.send(emails);
 
         context.log('success');
         context.res = {
@@ -102,12 +102,18 @@ module.exports = async function (context, req) {
     }
 };
 
+Array.prototype.flatMap = function (f) {
+    return this.map(f).reduce((prev, curr) => [...prev, ...curr], []);
+};
+
 function extractArticle(document) {
     const result = new Readability('', document).parse();
     if (!result) return { title: null, elements: []}
     const { title, content } = result;
     const dom = new JSDOM(content);
-    const elements = Array.from(dom.window.document.body.children[0].children[0].children);
+    const elements = Array.from(dom.window.document.body.children)
+        .flatMap(child => Array.from(child.children)
+            .flatMap(child => Array.from(child.children)));
     return { title, elements };
 };
 
